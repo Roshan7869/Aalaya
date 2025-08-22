@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Production Configuration -->
+    <domain-config cleartextTrafficPermitted="false">
+        <!-- Aalay API Endpoints -->
+        <domain includeSubdomains="true">api.aalay.com</domain>
+        <!-- Firebase Services -->
+        <domain includeSubdomains="true">firebaseapp.com</domain>
+        <domain includeSubdomains="true">googleapis.com</domain>
+        <domain includeSubdomains="true">googleapi.com</domain>
+        <!-- Mapbox Services -->
+        <domain includeSubdomains="true">api.mapbox.com</domain>
+        <domain includeSubdomains="true">tiles.mapbox.com</domain>
+        <!-- Facebook Services -->
+        <domain includeSubdomains="true">graph.facebook.com</domain>
+        <domain includeSubdomains="true">facebook.com</domain>
+        
+        <!-- Certificate Pinning for Critical Domains -->
+        <pin-set expiration="2025-12-31">
+            <!-- Primary API Certificate Pin -->
+            <pin digest="SHA-256">XXXXXX</pin> <!-- Replace with actual certificate pin -->
+            <!-- Backup Certificate Pin -->
+            <pin digest="SHA-256">YYYYYY</pin> <!-- Replace with backup certificate pin -->
+        </pin-set>
+    </domain-config>
+    
+    <!-- Debug Configuration -->
+    <debug-overrides>
+        <!-- Allow cleartext traffic for localhost in debug builds only -->
+        <domain-config cleartextTrafficPermitted="true">
+            <domain>localhost</domain>
+            <domain>127.0.0.1</domain>
+            <domain>10.0.2.2</domain> <!-- Android emulator host -->
+        </domain-config>
+    </debug-overrides>
+    
+    <!-- Base Configuration -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Trust system certificates -->
+            <certificates src="system"/>
+            <!-- Trust user-added certificates in debug builds -->
+            <certificates src="user" overridePins="true"/>
+        </trust-anchors>
+    </base-config>
+</network-security-config>

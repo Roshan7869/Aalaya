@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Aalay</string>
+    <string name="app_tagline">Student Housing Made Easy</string>
+
+    <!-- Firebase/Google Integration -->
+    <string name="default_web_client_id">your_google_client_id.apps.googleusercontent.com</string>
+
+    <!-- Facebook Integration -->
+    <string name="facebook_app_id">YOUR_FACEBOOK_APP_ID</string>
+    <string name="facebook_client_token">YOUR_FACEBOOK_CLIENT_TOKEN</string>
+
+    <!-- Notification Channels -->
+    <string name="default_notification_channel_id">aalay_default</string>
+    <string name="notification_channel_default_name">General Notifications</string>
+    <string name="notification_channel_default_description">General app notifications</string>
+    <string name="notification_channel_bookings_name">Booking Notifications</string>
+    <string name="notification_channel_bookings_description">Notifications about your bookings and reservations</string>
+    <string name="notification_channel_roommate_name">Roommate Matching</string>
+    <string name="notification_channel_roommate_description">Notifications about roommate matches and messages</string>
+    <string name="notification_channel_deals_name">Deals &amp; Offers</string>
+    <string name="notification_channel_deals_description">Special deals and promotional offers</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_wishlist">Wishlist</string>
+    <string name="nav_roommate">Roommate</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Common Actions -->
+    <string name="action_continue">Continue</string>
+    <string name="action_get_started">Get Started</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_back">Back</string>
+    <string name="action_next">Next</string>
+    <string name="action_book_now">Book Now</string>
+    <string name="action_view_details">View Details</string>
+    <string name="action_contact_owner">Contact Owner</string>
+    <string name="action_share">Share</string>
+    <string name="action_filter">Filter</string>
+    <string name="action_sort">Sort</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_retry">Retry</string>
+
+    <!-- Authentication -->
+    <string name="auth_welcome_title">Welcome to Aalay</string>
+    <string name="auth_welcome_subtitle">Find your perfect student accommodation</string>
+    <string name="auth_sign_in">Sign In</string>
+    <string name="auth_sign_up">Sign Up</string>
+    <string name="auth_sign_out">Sign Out</string>
+    <string name="auth_forgot_password">Forgot Password?</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_confirm_password">Confirm Password</string>
+    <string name="auth_first_name">First Name</string>
+    <string name="auth_last_name">Last Name</string>
+    <string name="auth_phone">Phone Number</string>
+    <string name="auth_google_sign_in">Sign in with Google</string>
+    <string name="auth_facebook_sign_in">Sign in with Facebook</string>
+
+    <!-- Home Screen -->
+    <string name="home_welcome">Welcome back!</string>
+    <string name="home_search_hint">Search accommodations near your college…</string>
+    <string name="home_featured_listings">Featured Listings</string>
+    <string name="home_nearby_accommodations">Nearby Accommodations</string>
+    <string name="home_popular_areas">Popular Areas</string>
+    <string name="home_quick_filters">Quick Filters</string>
+
+    <!-- Search -->
+    <string name="search_title">Find Accommodation</string>
+    <string name="search_location_hint">Enter location or college name</string>
+    <string name="search_budget_from">Budget From</string>
+    <string name="search_budget_to">Budget To</string>
+    <string name="search_room_type">Room Type</string>
+    <string name="search_accommodation_type">Accommodation Type</string>
+    <string name="search_amenities">Amenities</string>
+    <string name="search_results">Search Results</string>
+    <string name="search_no_results">No accommodations found</string>
+    <string name="search_no_results_message">Try adjusting your filters or search in a different area</string>
+
+    <!-- Listing Details -->
+    <string name="listing_monthly_rent">Monthly Rent</string>
+    <string name="listing_security_deposit">Security Deposit</string>
+    <string name="listing_available_rooms">Available Rooms</string>
+    <string name="listing_amenities">Amenities</string>
+    <string name="listing_location">Location</string>
+    <string name="listing_owner_details">Owner Details</string>
+    <string name="listing_reviews">Reviews</string>
+    <string name="listing_similar">Similar Properties</string>
+    <string name="listing_book_visit">Book a Visit</string>
+    <string name="listing_contact_owner">Contact Owner</string>
+    <string name="listing_add_to_wishlist">Add to Wishlist</string>
+    <string name="listing_remove_from_wishlist">Remove from Wishlist</string>
+    <string name="listing_share_property">Share Property</string>
+
+    <!-- Booking -->
+    <string name="booking_title">Book Accommodation</string>
+    <string name="booking_check_in_date">Check-in Date</string>
+    <string name="booking_stay_duration">Stay Duration</string>
+    <string name="booking_special_requests">Special Requests</string>
+    <string name="booking_payment_summary">Payment Summary</string>
+    <string name="booking_terms_conditions">Terms &amp; Conditions</string>
+    <string name="booking_confirm">Confirm Booking</string>
+    <string name="booking_success">Booking Confirmed!</string>
+    <string name="booking_success_message">Your booking has been confirmed. You will receive confirmation details shortly.</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_edit">Edit Profile</string>
+    <string name="profile_college_details">College Details</string>
+    <string name="profile_preferences">Preferences</string>
+    <string name="profile_booking_history">Booking History</string>
+    <string name="profile_saved_searches">Saved Searches</string>
+    <string name="profile_settings">Settings</string>
+    <string name="profile_help_support">Help &amp; Support</string>
+    <string name="profile_about">About Aalay</string>
+    <string name="profile_logout">Logout</string>
+
+    <!-- Roommate -->
+    <string name="roommate_title">Find Roommates</string>
+    <string name="roommate_matches">Compatible Matches</string>
+    <string name="roommate_requests">Roommate Requests</string>
+    <string name="roommate_compatibility_score">Compatibility Score</string>
+    <string name="roommate_send_request">Send Request</string>
+    <string name="roommate_accept_request">Accept</string>
+    <string name="roommate_decline_request">Decline</string>
+
+    <!-- Wishlist -->
+    <string name="wishlist_title">My Wishlist</string>
+    <string name="wishlist_empty">Your wishlist is empty</string>
+    <string name="wishlist_empty_message">Start adding accommodations you like to keep track of them</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_app_preferences">App Preferences</string>
+    <string name="settings_data_sync">Data Sync</string>
+
+    <!-- Error Messages -->
+    <string name="error_network">Network connection error</string>
+    <string name="error_server">Server error, please try again</string>
+    <string name="error_authentication">Authentication failed</string>
+    <string name="error_permission_denied">Permission denied</string>
+    <string name="error_location_unavailable">Location unavailable</string>
+    <string name="error_invalid_input">Invalid input provided</string>
+    <string name="error_generic">Something went wrong</string>
+
+    <!-- Success Messages -->
+    <string name="success_profile_updated">Profile updated successfully</string>
+    <string name="success_booking_confirmed">Booking confirmed!</string>
+    <string name="success_wishlist_added">Added to wishlist</string>
+    <string name="success_wishlist_removed">Removed from wishlist</string>
+
+    <!-- Loading -->
+    <string name="loading">Loading…</string>
+    <string name="loading_accommodations">Loading accommodations…</string>
+    <string name="loading_location">Getting your location…</string>
+    <string name="loading_booking">Processing booking…</string>
+
+    <!-- Permissions -->
+    <string name="permission_location_title">Location Permission Required</string>
+    <string name="permission_location_message">We need location access to show accommodations near your college</string>
+    <string name="permission_camera_title">Camera Permission Required</string>
+    <string name="permission_camera_message">Camera access is needed to take photos for your profile</string>
+    <string name="permission_storage_title">Storage Permission Required</string>
+    <string name="permission_storage_message">Storage access is needed to save and share images</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_app_logo">Aalay app logo</string>
+    <string name="cd_user_avatar">User profile picture</string>
+    <string name="cd_accommodation_image">Accommodation image</string>
+    <string name="cd_back_button">Back button</string>
+    <string name="cd_menu_button">Menu button</string>
+    <string name="cd_filter_button">Filter button</string>
+    <string name="cd_location_icon">Location icon</string>
+    <string name="cd_rating_star">Rating star</string>
+
+    <!-- Accommodation Types -->
+    <string name="accommodation_type_pg">PG</string>
+    <string name="accommodation_type_hostel">Hostel</string>
+    <string name="accommodation_type_apartment">Apartment</string>
+    <string name="accommodation_type_flat">Flat</string>
+    <string name="accommodation_type_shared_room">Shared Room</string>
+
+    <!-- Room Types -->
+    <string name="room_type_single">Single</string>
+    <string name="room_type_double">Double</string>
+    <string name="room_type_triple">Triple</string>
+    <string name="room_type_shared">Shared</string>
+    <string name="room_type_dormitory">Dormitory</string>
+
+    <!-- Amenities -->
+    <string name="amenity_wifi">Wi-Fi</string>
+    <string name="amenity_ac">Air Conditioning</string>
+    <string name="amenity_parking">Parking</string>
+    <string name="amenity_laundry">Laundry</string>
+    <string name="amenity_mess">Mess/Kitchen</string>
+    <string name="amenity_gym">Gym</string>
+    <string name="amenity_study_room">Study Room</string>
+    <string name="amenity_power_backup">Power Backup</string>
+    <string name="amenity_security">24/7 Security</string>
+    <string name="amenity_water_supply">Water Supply</string>
+
+    <!-- Distance and Duration -->
+    <string name="distance_km">%1$s km</string>
+    <string name="duration_mins">%1$d mins</string>
+    <string name="walking_time">%1$d min walk</string>
+    <string name="driving_time">%1$d min drive</string>
+
+    <!-- Currency -->
+    <string name="currency_symbol">₹</string>
+    <string name="price_per_month">₹%1$s/month</string>
+    <string name="price_format">₹%1$,.0f</string>
+
+    <!-- Date Format -->
+    <string name="date_format">dd MMM yyyy</string>
+    <string name="time_format">HH:mm</string>
+
+    <!-- Deep Links -->
+    <string name="deeplink_accommodation_not_found">Accommodation not found</string>
+    <string name="deeplink_invalid_link">Invalid link</string>
+</resources>

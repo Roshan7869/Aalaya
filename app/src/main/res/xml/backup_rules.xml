@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Include user preferences and app data -->
+    <include domain="sharedpref" path="."/>
+    <include domain="database" path="aalay_database.db"/>
+    <include domain="file" path="user_images/"/>
+    
+    <!-- Exclude sensitive data -->
+    <exclude domain="sharedpref" path="auth_tokens.xml"/>
+    <exclude domain="sharedpref" path="secure_prefs.xml"/>
+    <exclude domain="file" path="cache/"/>
+    <exclude domain="file" path="temp/"/>
+    
+    <!-- Exclude Firebase and external service tokens -->
+    <exclude domain="database" path="firebase_cache.db"/>
+    <exclude domain="file" path="firebase/"/>
+</full-backup-content>

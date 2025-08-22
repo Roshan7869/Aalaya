@@ -1,0 +1,270 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-parcelize'
+    id 'androidx.navigation.safeargs.kotlin'
+}
+
+// Load environment variables
+apply from: '../env-loader.gradle'
+
+android {
+    namespace 'com.aalay.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.aalay.app"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+
+        // Room schema export directory
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
+    }
+
+    signingConfigs {
+        debug {}
+        release {
+            if (System.getenv("KEYSTORE_FILE") != null) {
+                storeFile file(System.getenv("KEYSTORE_FILE"))
+            } else if (file("release.keystore").exists()) {
+                storeFile file("release.keystore")
+            }
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: "android"
+            keyAlias System.getenv("KEY_ALIAS") ?: "androiddebugkey"
+            keyPassword System.getenv("KEY_PASSWORD") ?: "android"
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-DEBUG"
+            resValue "string", "app_name", "Aalay Debug"
+            buildConfigField "String", "API_BASE_URL", "\"${getEnvVar('API_BASE_URL_DEV', 'https://dev-api.aalay.com/v1/')}\""
+            buildConfigField "String", "MAPBOX_API_KEY", "\"${getEnvVar('MAPBOX_ACCESS_TOKEN_DEV', 'your_debug_mapbox_key')}\""
+            buildConfigField "String", "ENVIRONMENT", "\"development\""
+            buildConfigField "boolean", "ENABLE_LOGGING", "true"
+            signingConfig signingConfigs.debug
+        }
+        
+        staging {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            applicationIdSuffix ".staging"
+            versionNameSuffix "-STAGING"
+            resValue "string", "app_name", "Aalay Staging"
+            buildConfigField "String", "API_BASE_URL", "\"${getEnvVar('API_BASE_URL_STAGING', 'https://staging-api.aalay.com/v1/')}\""
+            buildConfigField "String", "MAPBOX_API_KEY", "\"${getEnvVar('MAPBOX_ACCESS_TOKEN_STAGING', 'your_staging_mapbox_key')}\""
+            buildConfigField "String", "ENVIRONMENT", "\"staging\""
+            buildConfigField "boolean", "ENABLE_LOGGING", "false"
+            if (signingConfigs.release.storeFile != null) {
+                signingConfig signingConfigs.release
+            }
+        }
+        
+        release {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "API_BASE_URL", "\"${getEnvVar('API_BASE_URL_PROD', 'https://api.aalay.com/v1/')}\""
+            buildConfigField "String", "MAPBOX_API_KEY", "\"${getEnvVar('MAPBOX_ACCESS_TOKEN_PROD', 'your_production_mapbox_key')}\""
+            buildConfigField "String", "ENVIRONMENT", "\"production\""
+            buildConfigField "boolean", "ENABLE_LOGGING", "false"
+            if (signingConfigs.release.storeFile != null) {
+                signingConfig signingConfigs.release
+            }
+            
+            // Split APKs by ABI for smaller download sizes
+            splits {
+                abi {
+                    enable true
+                    reset()
+                    include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+                    universalApk true
+                }
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+
+    buildFeatures {
+        compose true
+        viewBinding true
+        dataBinding true
+        buildConfig true
+        resValues true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.5.14'
+    }
+
+    packaging {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs += [
+                '../../ui',
+                '../../data',
+                '../../domain',
+                '../../di',
+                '../../services',
+                '../../utils'
+            ]
+        }
+    }
+}
+
+dependencies {
+    // Core Android
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Jetpack Compose BOM
+    implementation platform('androidx.compose:compose-bom:2023.10.01')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.activity:activity-compose:1.8.1'
+    implementation 'androidx.compose.runtime:runtime-livedata'
+    implementation 'androidx.compose.ui:ui-viewbinding'
+
+    // Navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:2.7.5"
+    implementation "androidx.navigation:navigation-ui-ktx:2.7.5"
+    implementation "androidx.navigation:navigation-compose:2.7.5"
+
+    // ViewModel and LiveData
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.8.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0"
+
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+
+    // Hilt Dependency Injection
+    implementation "com.google.dagger:hilt-android:2.48"
+    implementation "androidx.hilt:hilt-navigation-compose:1.1.0"
+    kapt "com.google.dagger:hilt-compiler:2.48"
+
+    // Room Database
+    implementation "androidx.room:room-runtime:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"
+    kapt "androidx.room:room-compiler:2.6.1"
+
+    // Network - Retrofit & OkHttp
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.okhttp3:okhttp:4.12.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.12.0"
+
+    // JSON Parsing
+    implementation "com.google.code.gson:gson:2.10.1"
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:32.8.1')
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-config-ktx'
+    
+    // Logging
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    // Google Play Services
+    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    // Facebook SDK
+    implementation 'com.facebook.android:facebook-login:16.2.0'
+
+    // Image Loading - Glide
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    implementation "com.github.skydoves:landscapist-glide:2.2.11"
+    kapt 'com.github.bumptech.glide:compiler:4.16.0'
+
+    // Animations - Lottie
+    implementation "com.airbnb.android:lottie:6.1.0"
+    implementation "com.airbnb.android:lottie-compose:6.1.0"
+
+    // Permission handling
+    implementation "com.google.accompanist:accompanist-permissions:0.32.0"
+
+    // Date/Time Picker
+    implementation "io.github.vanpra.compose-material-dialogs:datetime:0.9.0"
+
+    // Splash Screen
+    implementation "androidx.core:core-splashscreen:1.0.1"
+
+    // Paging
+    implementation "androidx.paging:paging-runtime-ktx:3.2.1"
+    implementation "androidx.paging:paging-compose:3.2.1"
+
+    // Biometric Authentication
+    implementation "androidx.biometric:biometric:1.1.0"
+
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation "org.mockito:mockito-core:5.6.0"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3"
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
+    testImplementation "com.google.dagger:hilt-android-testing:2.48"
+    kaptTest "com.google.dagger:hilt-compiler:2.48"
+
+    // Android Testing
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation platform('androidx.compose:compose-bom:2023.10.01')
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    androidTestImplementation "androidx.navigation:navigation-testing:2.7.5"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:2.48"
+    kaptAndroidTest "com.google.dagger:hilt-compiler:2.48"
+
+    // Debug
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+}
+
+// Apply Google Services and Crashlytics only if google-services.json exists
+def googleServicesFile = file("${projectDir}/google-services.json")
+if (googleServicesFile.exists()) {
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
+}
