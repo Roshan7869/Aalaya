@@ -8,10 +8,12 @@ import android.content.Context
 import com.aalay.app.data.local.dao.AccommodationDao
 import com.aalay.app.data.local.dao.StudentPreferencesDao
 import com.aalay.app.data.local.dao.TrafficCacheDao
+import com.aalay.app.data.local.dao.LocationDao
 import com.aalay.app.data.local.entities.AccommodationEntity
 import com.aalay.app.data.local.entities.StudentPreferencesEntity
 import com.aalay.app.data.local.entities.TrafficCacheEntity
-import com.aalay.app.data.local.converters.Converters
+import com.aalay.app.data.local.entities.LocationEntity
+import com.aalay.app.data.local.RoomtypeConverter
 
 /**
  * Main Room database for Aalay app
@@ -21,17 +23,19 @@ import com.aalay.app.data.local.converters.Converters
     entities = [
         AccommodationEntity::class,
         StudentPreferencesEntity::class,
-        TrafficCacheEntity::class
+        TrafficCacheEntity::class,
+        LocationEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
-@TypeConverters(Converters::class)
+@TypeConverters(RoomtypeConverter::class)
 abstract class AalayDatabase : RoomDatabase() {
     
     abstract fun accommodationDao(): AccommodationDao
     abstract fun studentPreferencesDao(): StudentPreferencesDao
     abstract fun trafficCacheDao(): TrafficCacheDao
+    abstract fun locationDao(): LocationDao
     
     companion object {
         @Volatile

@@ -16694,11 +16694,7 @@ com.aalay.app.R$color:
     private void <init>()
 com.aalay.app.R$dimen
 com.aalay.app.R$drawable
-com.aalay.app.R$id
-com.aalay.app.R$layout
-com.aalay.app.R$menu
 com.aalay.app.R$mipmap
-com.aalay.app.R$navigation
 com.aalay.app.R$string:
     public static int accommodation_type_apartment
     public static int accommodation_type_flat
@@ -16767,6 +16763,7 @@ com.aalay.app.R$string:
     public static int deeplink_accommodation_not_found
     public static int deeplink_invalid_link
     public static int default_notification_channel_id
+    public static int default_web_client_id
     public static int distance_km
     public static int driving_time
     public static int duration_mins
@@ -16858,9 +16855,6 @@ com.aalay.app.R$string:
     public static int success_wishlist_added
     public static int success_wishlist_removed
     public static int time_format
-    public static int title_dashboard
-    public static int title_home
-    public static int title_notifications
     public static int walking_time
     public static int wishlist_empty
     public static int wishlist_empty_message
@@ -16869,10 +16863,6 @@ com.aalay.app.R$string:
 com.aalay.app.R$style
 com.aalay.app.R$xml
 com.aalay.app.R
-com.aalay.app.databinding.ActivityMainBinding
-com.aalay.app.databinding.FragmentDashboardBinding
-com.aalay.app.databinding.FragmentHomeBinding
-com.aalay.app.databinding.FragmentNotificationsBinding
 com.android.installreferrer.BuildConfig
 com.android.installreferrer.R
 com.android.installreferrer.api.InstallReferrerClient$InstallReferrerResponse

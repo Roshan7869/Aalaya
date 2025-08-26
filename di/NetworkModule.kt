@@ -5,6 +5,7 @@ import com.aalay.app.BuildConfig
 import com.aalay.app.config.ConfigManager
 import com.aalay.app.data.remote.AccommodationApiService
 import com.aalay.app.data.remote.MapboxDirectionsService
+import com.aalay.app.data.remote.BhilaiLocationApiService
 import com.aalay.app.utils.SecurityConfig
 import com.aalay.app.utils.SecurityInterceptor
 import dagger.Module
@@ -186,5 +187,13 @@ object NetworkModule {
         @Named("mapbox_retrofit") retrofit: Retrofit
     ): MapboxDirectionsService {
         return retrofit.create(MapboxDirectionsService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBhilaiLocationApiService(
+        @Named("aalay_retrofit") retrofit: Retrofit
+    ): BhilaiLocationApiService {
+        return retrofit.create(BhilaiLocationApiService::class.java)
     }
 }

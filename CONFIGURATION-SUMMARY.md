@@ -1,244 +1,431 @@
-# Aalay Configuration Management System - Summary 📋
+# Configuration Summary - Aalay Bhilai APK
 
-## 🎯 Problem Solved
+This document provides a comprehensive summary of all configuration aspects for the Aalay Bhilai APK package.
 
-You requested a centralized configuration system where all API keys and settings are stored in one place, accessible by all parts of the application. I've implemented a comprehensive solution with the following components:
+## 📋 Environment Configuration
 
-## 🏗️ Solution Architecture
+### Environment Files
+- **Template**: `.env.template` - Contains all required environment variables with sample values
+- **Local Config**: `.env` - Local development configuration (gitignored)
+- **Loader**: `env-loader.gradle` - Gradle script for loading environment variables
+- **Validator**: `validate-config.py` - Python script for validating configuration
 
-### 1. Environment Configuration Files
+### Required Environment Variables
 
-**📄 `.env.template`** - Template with all possible configuration options
-- 100+ configuration parameters
-- Organized into logical sections
-- Documentation for each parameter
-- Safe default values for development
-
-**📄 `.env`** - Your actual configuration file (not committed to git)
-- Copy of template with your real API keys
-- Environment-specific values (dev/staging/prod)
-- Automatically loaded by build system
-
-### 2. Centralized Configuration Manager
-
-**📄 `utils/ConfigManager.kt`** - Single source of truth for all configuration
-```kotlin
-@Singleton
-class ConfigManager @Inject constructor(
-    @ApplicationContext private val context: Context
-) {
-    // Provides centralized access to all settings
-    val apiBaseUrl: String
-    val mapboxAccessToken: String
-    val isDebugMode: Boolean
-    // ... 50+ configuration properties
-}
-```
-
-### 3. Build System Integration
-
-**📄 `env-loader.gradle`** - Gradle plugin to load environment variables
-- Automatically reads `.env` file during build
-- Injects values into `BuildConfig`
-- Validates required variables
-- Supports environment-specific overrides
-
-**📄 Updated `app/build.gradle`**
-- Uses environment variables for build configuration
-- Dynamic API URLs based on build variant
-- Secure handling of sensitive data
-
-### 4. Security Layer
-
-**📄 `utils/SecurityConfig.kt`** - Enhanced security manager
-- Integrates with ConfigManager
-- Encrypted storage for sensitive data
-- Certificate pinning configuration
-- API request signing
-
-### 5. Dependency Injection
-
-**📄 Updated `di/NetworkModule.kt`**
-- Provides ConfigManager via Hilt
-- Uses configuration for all network setup
-- Environment-aware API clients
-- Security interceptors integration
-
-## 🔄 How It Works
-
-### 1. Development Flow
-
+#### API Endpoints (Bhilai-specific)
 ```bash
-# 1. Copy environment template
-cp .env.template .env
-
-# 2. Fill in your API keys
-nano .env
-
-# 3. Validate configuration
-python validate-config.py
-
-# 4. Build and run
-./gradlew assembleDebug
+API_BASE_URL_DEV=https://dev-api.aalay.com/v1/bhilai
+API_BASE_URL_STAGING=https://staging-api.aalay.com/v1/bhilai
+API_BASE_URL_PROD=https://api.aalay.com/v1/bhilai
 ```
 
-### 2. Runtime Access
-
-```kotlin
-// Inject ConfigManager anywhere in your app
-@Inject lateinit var configManager: ConfigManager
-
-// Access any configuration value
-val apiUrl = configManager.apiBaseUrl
-val mapboxKey = configManager.mapboxAccessToken
-val isFeatureEnabled = configManager.isBiometricAuthEnabled
+#### Mapbox Configuration (Optional)
+```bash
+MAPBOX_ACCESS_TOKEN_DEV=pk.sample_development_token
+MAPBOX_ACCESS_TOKEN_STAGING=pk.sample_staging_token
+MAPBOX_ACCESS_TOKEN_PROD=pk.sample_production_token
 ```
 
-### 3. Build-time Configuration
+#### Firebase Configuration
+```bash
+FIREBASE_PROJECT_ID_DEV=aalaya-dev
+FIREBASE_PROJECT_ID_STAGING=aalaya-staging
+FIREBASE_PROJECT_ID_PROD=aalaya-prod
+FIREBASE_APP_ID=1:123456789012:android:abcdef123456
+```
+
+#### Keystore Configuration (Release Builds)
+```bash
+KEYSTORE_FILE=release.keystore
+KEYSTORE_PASSWORD=your_keystore_password
+KEY_ALIAS=your_key_alias
+KEY_PASSWORD=your_key_password
+```
+
+#### Bhilai-Specific Settings
+```bash
+BHILAI_CENTER_LAT=21.2181
+BHILAI_CENTER_LNG=81.3248
+BHILAI_SEARCH_RADIUS_KM=10
+GOOGLE_MAPS_URL_BASE=https://www.google.com/maps/search/?api=1&query=
+```
+
+## 🏗️ Build Configuration
+
+### Build Variants
+
+#### Debug Variant
+- **Application ID**: `com.aalay.app.debug`
+- **Version Suffix**: `-DEBUG`
+- **API Endpoint**: Development Bhilai API
+- **Logging**: Enabled
+- **Obfuscation**: Disabled
+- **Signing**: Debug keystore
+
+#### Staging Variant  
+- **Application ID**: `com.aalay.app.staging`
+- **Version Suffix**: `-STAGING`
+- **API Endpoint**: Staging Bhilai API
+- **Logging**: Disabled
+- **Obfuscation**: Enabled
+- **Signing**: Release keystore (if available)
+
+#### Release Variant
+- **Application ID**: `com.aalay.app`
+- **Version Suffix**: None
+- **API Endpoint**: Production Bhilai API
+- **Logging**: Disabled
+- **Obfuscation**: Enabled
+- **Signing**: Release keystore (required)
+- **APK Splitting**: By ABI enabled
+
+### Build Configuration Fields
+```gradle
+buildConfigField "String", "API_BASE_URL", "\"${api_endpoint}\""
+buildConfigField "String", "BHILAI_API_ENDPOINT", "\"${api_endpoint}/bhilai\""
+buildConfigField "String", "MAPBOX_API_KEY", "\"${mapbox_token}\""
+buildConfigField "String", "ENVIRONMENT", "\"${environment}\""
+buildConfigField "boolean", "ENABLE_LOGGING", "${logging_enabled}"
+```
+
+## 📱 APK Generation
+
+### Build Commands
+
+#### Debug APK
+```bash
+./gradlew assembleDebug -Penv=dev
+```
+**Output**: `app/build/outputs/apk/debug/app-debug.apk`
+
+#### Staging APK
+```bash
+./gradlew assembleStaging -Penv=staging
+```
+**Output**: `app/build/outputs/apk/staging/app-staging.apk`
+
+#### Release APK
+```bash
+./gradlew assembleRelease -Penv=prod
+```
+**Output**: `app/build/outputs/apk/release/app-release.apk`
+
+### APK Signing Configuration
+
+#### Debug Signing
+- Uses default Android debug keystore
+- No additional configuration required
+
+#### Release Signing
+- Requires custom keystore file
+- Keystore details loaded from environment variables
+- Fallback to `release.keystore` if environment variables not set
 
 ```gradle
-// Environment variables are automatically loaded
-buildConfigField "String", "API_BASE_URL", "\"${getEnvVar('API_BASE_URL_DEV')}\""
-```
-
-## 📊 Configuration Categories
-
-### 🌐 API Configuration
-- Base URLs for different environments
-- Authentication keys and secrets
-- Timeout and retry settings
-- Request signing configuration
-
-### 🔥 Firebase Services
-- Project IDs for each environment
-- FCM configuration
-- Analytics and Crashlytics settings
-- Storage bucket configuration
-
-### 🗺️ Mapbox Integration
-- Access tokens for each environment
-- Map style configuration
-- API endpoint URLs
-- Feature toggles
-
-### 🔐 Security Settings
-- Certificate pinning configuration
-- Encryption keys
-- API security features
-- Debug mode settings
-
-### 🎛️ Feature Flags
-- Enable/disable app features
-- Experimental feature toggles
-- Platform-specific features
-- A/B testing configuration
-
-### 💳 Payment Integration
-- Gateway configuration
-- API keys for payment providers
-- Test vs production modes
-- Webhook configuration
-
-### 📱 Social Authentication
-- Google Sign-In configuration
-- Facebook Login settings
-- OAuth client configurations
-- Platform-specific settings
-
-### 🛠️ Development Tools
-- Logging configuration
-- Debug tool settings
-- Performance monitoring
-- Testing configuration
-
-## 🎯 Key Benefits
-
-### ✅ Centralized Management
-- Single `.env` file for all configuration
-- One `ConfigManager` class for all access
-- No scattered hardcoded values
-- Easy environment switching
-
-### ✅ Security First
-- Sensitive data never committed to git
-- Encrypted storage for runtime values
-- Certificate pinning for network security
-- API request signing
-
-### ✅ Environment Support
-- Separate configurations for dev/staging/prod
-- Automatic environment detection
-- Build variant specific values
-- Feature flags per environment
-
-### ✅ Developer Experience
-- Simple setup process
-- Validation tools included
-- Comprehensive documentation
-- Error checking and warnings
-
-### ✅ Production Ready
-- Proper secret management
-- CI/CD integration ready
-- Monitoring and analytics
-- Performance optimized
-
-## 🔧 Files Created/Modified
-
-### New Configuration Files
-- `.env.template` - Configuration template
-- `.env` - Your actual configuration
-- `env-loader.gradle` - Environment loader
-- `utils/ConfigManager.kt` - Centralized config manager
-- `validate-config.py` - Configuration validator
-- `SETUP.md` - Setup guide
-
-### Updated Files
-- `app/build.gradle` - Environment integration
-- `di/NetworkModule.kt` - ConfigManager injection
-- `utils/SecurityConfig.kt` - Config integration
-- `AalayApplication.kt` - Config initialization
-- `.gitignore` - Security exclusions
-
-## 🚀 Usage Examples
-
-### Adding New Configuration
-
-1. Add to `.env.template`:
-```env
-NEW_API_KEY=your_new_api_key_here
-NEW_FEATURE_ENABLED=true
-```
-
-2. Add to `ConfigManager.kt`:
-```kotlin
-val newApiKey: String?
-    get() = getProperty("NEW_API_KEY")
-
-val isNewFeatureEnabled: Boolean
-    get() = getBooleanProperty("NEW_FEATURE_ENABLED", false)
-```
-
-3. Use anywhere in app:
-```kotlin
-@Inject lateinit var configManager: ConfigManager
-
-if (configManager.isNewFeatureEnabled) {
-    // Use new feature
-    apiCall(configManager.newApiKey)
+signingConfigs {
+    release {
+        storeFile file(System.getenv("KEYSTORE_FILE") ?: "release.keystore")
+        storePassword System.getenv("KEYSTORE_PASSWORD")
+        keyAlias System.getenv("KEY_ALIAS")
+        keyPassword System.getenv("KEY_PASSWORD")
+    }
 }
 ```
 
-## 🎉 Result
+## 🗄️ Database Configuration
 
-You now have a production-ready configuration management system that:
+### Room Database Setup
+- **Database Name**: `aalay_database`
+- **Version**: 2 (upgraded to include LocationEntity)
+- **Migration Strategy**: `fallbackToDestructiveMigration()` for development
 
-- ✅ **Centralizes all API keys and settings** in one `.env` file
-- ✅ **Provides single access point** via `ConfigManager` class  
-- ✅ **Supports multiple environments** (dev/staging/prod)
-- ✅ **Handles security properly** with encryption and git exclusions
-- ✅ **Integrates with build system** for automatic loading
-- ✅ **Includes validation tools** to prevent configuration errors
-- ✅ **Is fully documented** with setup guides and examples
+### Entities
+```kotlin
+@Database(
+    entities = [
+        AccommodationEntity::class,
+        StudentPreferencesEntity::class,
+        TrafficCacheEntity::class,
+        LocationEntity::class  // New Bhilai locations
+    ],
+    version = 2,
+    exportSchema = false
+)
+```
 
-All your programs can now fetch API configuration from the centralized `ConfigManager` instead of scattered hardcoded values! 🚀
+### LocationEntity Schema
+```kotlin
+@Entity(tableName = "bhilai_locations")
+data class LocationEntity(
+    @PrimaryKey val id: String,
+    val type: String,           // "room" or "mess"
+    val name: String,
+    val latitude: Double,       // Validated: 21.1 to 21.3
+    val longitude: Double,      // Validated: 81.2 to 81.4
+    val address: String,
+    val pricePerMonth: Int?,
+    val rating: Float,
+    val isVerified: Boolean,
+    val amenities: List<String>,
+    // ... additional fields
+)
+```
+
+## 🌐 API Configuration
+
+### Bhilai Location API Endpoints
+```kotlin
+interface BhilaiLocationApiService {
+    @GET("locations")
+    suspend fun getAllLocations(): Response<List<LocationEntity>>
+    
+    @GET("locations")
+    suspend fun getLocationsByType(@Query("type") type: String): Response<List<LocationEntity>>
+    
+    @GET("locations/nearby")
+    suspend fun getNearbyLocations(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("radius") radiusKm: Double
+    ): Response<List<LocationEntity>>
+    
+    // ... other endpoints
+}
+```
+
+### Network Configuration
+- **Base URL**: Environment-specific Bhilai API endpoints
+- **Timeout**: Configurable via ConfigManager
+- **Retry**: Connection retry enabled
+- **Logging**: Environment-dependent HTTP logging
+- **Headers**: Common JSON headers added automatically
+
+## 🗺️ Maps Integration Configuration
+
+### Google Maps URL Generation
+```kotlin
+object MapUtils {
+    private const val GOOGLE_MAPS_BASE_URL = "https://www.google.com/maps/search/?api=1&query="
+    
+    fun generateMapsUrl(latitude: Double, longitude: Double): String {
+        if (!isWithinBhilaiBounds(latitude, longitude)) {
+            throw IllegalArgumentException("Coordinates outside Bhilai bounds")
+        }
+        return "$GOOGLE_MAPS_BASE_URL$latitude,$longitude"
+    }
+}
+```
+
+### Coordinate Validation
+- **Latitude Range**: 21.1° to 21.3° N
+- **Longitude Range**: 81.2° to 81.4° E
+- **Center Point**: 21.2181° N, 81.3248° E
+- **Validation**: All locations must be within Bhilai bounds
+
+### Navigation URLs
+- **Search**: `https://www.google.com/maps/search/?api=1&query={lat},{lng}`
+- **Directions**: `https://www.google.com/maps/dir/?api=1&destination={lat},{lng}`
+- **No API Key Required**: Uses public URL scheme
+
+## 🎨 UI Configuration
+
+### Doodle Theme Colors
+```kotlin
+object DoodleColors {
+    val Primary = Color(0xFF1E88E5)      // Blue
+    val Secondary = Color(0xFFFF6B6B)    // Coral
+    val Accent = Color(0xFF4ECDC4)       // Teal
+    val Success = Color(0xFF45B7D1)      // Light Blue
+    val Warning = Color(0xFFFFD93D)      // Yellow
+    val Background = Color(0xFFFFFBF7)   // Cream
+    val Surface = Color(0xFFFFFFFF)      // White
+}
+```
+
+### Typography Configuration
+- **Font Family**: `FontFamily.Cursive` for doodle-style appearance
+- **Text Decoration**: `TextDecoration.Underline` for navigation links
+- **Font Weights**: Regular and Bold variants
+- **Sizes**: 10sp to 24sp range
+
+### UI Components
+- **Cards**: `RoundedCornerShape(16.dp to 20.dp)`
+- **Buttons**: `RoundedCornerShape(25.dp)` with elevation
+- **Elevation**: 4dp to 8dp for cards and buttons
+- **Icons**: Emoji-based (🏠🍽️🗺️📍) for visual appeal
+
+## 🔧 Dependency Injection Configuration
+
+### Hilt Modules
+
+#### DatabaseModule
+```kotlin
+@Provides
+@Singleton
+fun provideAalayDatabase(@ApplicationContext context: Context): AalayDatabase
+
+@Provides
+fun provideLocationDao(database: AalayDatabase): LocationDao
+```
+
+#### NetworkModule
+```kotlin
+@Provides
+@Singleton
+fun provideBhilaiLocationApiService(@Named("aalay_retrofit") retrofit: Retrofit): BhilaiLocationApiService
+```
+
+#### Repository Dependencies
+- `BhilaiLocationRepository` - Singleton
+- Repository dependencies auto-injected via constructor
+
+### Component Hierarchy
+- **SingletonComponent**: Database, Network, Repository singletons
+- **ViewModelComponent**: ViewModels with repository dependencies
+- **ActivityComponent**: Activity-scoped dependencies
+
+## 🚀 CI/CD Configuration
+
+### GitHub Actions Workflow
+- **Trigger**: Push to main/develop, PR to main, manual dispatch
+- **Jobs**: validate-config, build, deploy-firebase, test
+- **Environments**: Debug, Staging, Release
+- **Artifacts**: APK files with retention policies
+
+### Deployment Configuration
+- **Firebase App Distribution**: Automated for release builds
+- **Google Play**: Configured for production deployment
+- **Artifact Storage**: 30 days (debug/staging), 90 days (release)
+
+### Secrets Required
+```
+MAPBOX_ACCESS_TOKEN_PROD
+FIREBASE_PROJECT_ID_PROD
+GOOGLE_SERVICES_JSON
+KEYSTORE_BASE64
+KEYSTORE_PASSWORD
+KEY_ALIAS
+KEY_PASSWORD
+FIREBASE_TOKEN
+FIREBASE_APP_ID
+```
+
+## 📊 Performance Configuration
+
+### Database Optimization
+- **Indexing**: Efficient queries for location search
+- **Caching**: Flow-based reactive updates
+- **Background Operations**: All database operations on background threads
+
+### Network Optimization
+- **Connection Pooling**: OkHttp connection management
+- **Caching**: HTTP response caching
+- **Retry Logic**: Exponential backoff for failed requests
+
+### UI Performance
+- **Compose Optimization**: State management best practices
+- **Image Loading**: Glide with caching
+- **List Performance**: LazyColumn for efficient scrolling
+
+## 🔒 Security Configuration
+
+### Network Security
+- **Certificate Pinning**: Enabled in release builds
+- **Network Security Config**: XML configuration for allowed domains
+- **HTTPS Only**: All API endpoints use HTTPS
+
+### Data Security
+- **Encrypted Storage**: Room database with encryption
+- **Secure Preferences**: EncryptedSharedPreferences for sensitive data
+- **Input Validation**: All user inputs validated
+
+### Code Protection
+- **ProGuard**: Code obfuscation in release builds
+- **API Key Protection**: Keys stored in environment variables
+- **Signing**: APK signing for integrity verification
+
+## 📝 Configuration Validation
+
+### Validation Script (`validate-config.py`)
+```python
+def validate_config():
+    required_keys = ['API_BASE_URL_PROD', 'MAPBOX_ACCESS_TOKEN_PROD']
+    # Validates presence and format of required configurations
+    # Warns about placeholder values
+    # Checks file existence and JSON validity
+```
+
+### Build-time Validation
+- Environment variable loading with fallbacks
+- Coordinate validation during data insertion
+- API endpoint validation during network setup
+
+## 🐛 Troubleshooting Configuration
+
+### Common Issues
+
+**Missing Environment Variables**
+```bash
+# Solution: Copy template and configure
+cp .env.template .env
+nano .env
+```
+
+**Invalid Coordinates**
+```kotlin
+// Error: Coordinates outside Bhilai bounds
+// Solution: Verify latitude (21.1-21.3) and longitude (81.2-81.4)
+```
+
+**Build Failures**
+```bash
+# Check configuration
+python validate-config.py
+
+# Clean and rebuild
+./gradlew clean assembleDebug
+```
+
+**Signing Issues**
+```
+# Verify keystore configuration in environment variables
+# Ensure keystore file exists and passwords are correct
+```
+
+## 📈 Configuration Best Practices
+
+### Development
+1. Use `.env` file for local development
+2. Never commit sensitive keys to version control
+3. Use debug build for local testing
+4. Validate configuration before building
+
+### Staging
+1. Use staging environment for integration testing
+2. Test with production-like data
+3. Verify all API endpoints work correctly
+4. Test APK installation and functionality
+
+### Production
+1. Use production API endpoints
+2. Enable code obfuscation and signing
+3. Test thoroughly before release
+4. Monitor crash reports and analytics
+
+---
+
+## ✅ Configuration Checklist
+
+- [ ] `.env` file created and configured
+- [ ] API endpoints updated for Bhilai
+- [ ] Firebase project configured
+- [ ] Keystore created for signing
+- [ ] Configuration validated with script
+- [ ] Build variants tested (debug/staging/release)
+- [ ] APK generated and installed successfully
+- [ ] Navigation functionality verified
+- [ ] UI elements displaying correctly
+
+---
+
+**Configuration Status**: ✅ Complete and Ready for Production

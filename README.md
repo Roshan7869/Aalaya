@@ -7,6 +7,21 @@
 
 Aalay is a comprehensive student housing platform designed specifically for students in India. The app helps students find, book, and manage accommodations near their colleges with features like real-time traffic analysis, roommate matching, and student-verified listings.
 
+## 🌟 Bhilai Edition Features
+
+### 🏠 Bhilai-Specific Location Services
+- **Local Room & Mess Discovery**: Dedicated services for Bhilai student accommodations
+- **Coordinate Validation**: Ensures all listings are within Bhilai city bounds (21.1-21.3°N, 81.2-81.4°E)
+- **Cost-Free Navigation**: Google Maps integration without API costs using URL schemes
+- **Doodle-Style UI**: Playful, student-friendly interface with cursive fonts and emoji navigation
+- **Walking Distance Calculator**: Special indicators for locations within walking distance from city center
+
+### 🎨 Enhanced User Experience
+- **Emoji Navigation**: 🏠 for rooms, 🍽️ for mess, 🗺️ for maps
+- **Distance Display**: Real-time distance calculations from Bhilai center (21.2181°N, 81.3248°E)
+- **Smart Filtering**: Quick filters for room types, verified listings, and availability
+- **Offline Support**: Room database for offline browsing of cached locations
+
 ## 📱 Features
 
 ### Core Features
@@ -159,15 +174,38 @@ The app supports three build variants:
 
 ## 📦 Building for Production
 
-### Generate Release APK
+### Building Bhilai APK
+
+#### Quick APK Generation
 ```bash
-./gradlew assembleRelease
+# Debug APK (Development)
+./gradlew assembleDebug -Penv=dev
+
+# Staging APK (Testing)
+./gradlew assembleStaging -Penv=staging
+
+# Release APK (Production)
+./gradlew assembleRelease -Penv=prod
 ```
 
-### Generate App Bundle (Recommended)
+#### Environment Configuration
+Create `.env` file from template:
 ```bash
-./gradlew bundleRelease
+cp .env.template .env
+# Edit with your Bhilai-specific API endpoints
 ```
+
+**Bhilai API Endpoints:**
+- Dev: `https://dev-api.aalay.com/v1/bhilai`
+- Staging: `https://staging-api.aalay.com/v1/bhilai`
+- Prod: `https://api.aalay.com/v1/bhilai`
+
+#### APK Output Locations
+- **Debug**: `app/build/outputs/apk/debug/app-debug.apk`
+- **Staging**: `app/build/outputs/apk/staging/app-staging.apk`
+- **Release**: `app/build/outputs/apk/release/app-release.apk`
+
+📋 **Complete APK Guide**: See [BHILAI-APK-GUIDE.md](BHILAI-APK-GUIDE.md) for detailed implementation
 
 ### Signing Configuration
 1. Create or obtain a signing keystore

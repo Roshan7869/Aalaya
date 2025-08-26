@@ -1,64 +1,89 @@
-// Load environment variables from .env file
+/**
+ * Environment Variable Loader
+ * Loads environment variables from .env file and makes them available to build.gradle
+ */
+
 def loadEnvFile() {
     def envFile = file('.env')
-    if (!envFile.exists()) {
-        logger.warn('.env file not found, using default values')
+    def envTemplate = file('.env.template')
+    
+    if (!envFile.exists() && !envTemplate.exists()) {
+        logger.warn("Neither .env nor .env.template file found. Using default values.")
         return [:]
     }
     
-    def env = [:]
-    envFile.eachLine { line ->
-        if (line.startsWith('#') || line.trim().isEmpty()) {
-            return // Skip comments and empty lines
-        }
-        
-        def parts = line.split('=', 2)
-        if (parts.length == 2) {
-            def key = parts[0].trim()
-            def value = parts[1].trim()
-            
-            // Remove quotes if present
-            if ((value.startsWith('"') && value.endsWith('"')) || 
-                (value.startsWith("'") && value.endsWith("'"))) {
-                value = value.substring(1, value.length() - 1)
+    def targetFile = envFile.exists() ? envFile : envTemplate
+    def envProps = [:]
+    
+    try {
+        targetFile.readLines().each { line ->
+            def trimmed = line.trim()
+            if (!trimmed.isEmpty() && !trimmed.startsWith('#') && trimmed.contains('=')) {
+                def (key, value) = trimmed.split('=', 2)
+                envProps[key.trim()] = value.trim().replaceAll('^["\']|["\']$', '')
             }
-            
-            env[key] = value
         }
+        logger.info("Loaded ${envProps.size()} environment variables from ${targetFile.name}")
+    } catch (Exception e) {
+        logger.error("Failed to load environment file: ${e.message}")
+        return [:]
     }
     
-    return env
+    return envProps
 }
 
-// Function to get environment variable with fallback
-def getEnvVar(String key, String fallback = '') {
-    def env = loadEnvFile()
-    return env[key] ?: System.getenv(key) ?: fallback
+// Load environment variables
+def envVars = loadEnvFile()
+
+/**
+ * Helper function to get environment variable with fallback
+ */
+ext.getEnvVar = { String key, String defaultValue = '' ->
+    return System.getenv(key) ?: envVars[key] ?: defaultValue
 }
 
-// Export function for use in build.gradle files
-ext.getEnvVar = this.&getEnvVar
-ext.loadEnvFile = this.&loadEnvFile
-
-// Log configuration loading
-logger.info('Environment configuration loaded successfully')
+/**
+ * Bhilai-specific API endpoint configuration
+ */
+ext.getBhilaiApiEndpoint = { String env ->
+    switch (env.toLowerCase()) {
+        case 'dev':
+        case 'debug':
+            return getEnvVar('API_BASE_URL_DEV', 'https://dev-api.aalay.com/v1/bhilai')
+        case 'staging':
+            return getEnvVar('API_BASE_URL_STAGING', 'https://staging-api.aalay.com/v1/bhilai')
+        case 'prod':
+        case 'release':
+            return getEnvVar('API_BASE_URL_PROD', 'https://api.aalay.com/v1/bhilai')
+        default:
+            return getEnvVar('API_BASE_URL_DEV', 'https://dev-api.aalay.com/v1/bhilai')
+    }
+}
 
 // Validate critical environment variables
-def validateEnvVars() {
-    def required = ['API_BASE_URL_PROD', 'MAPBOX_ACCESS_TOKEN_PROD']
-    def missing = []
+def validateEnvironment() {
+    def criticalVars = [
+        'API_BASE_URL_PROD',
+        'MAPBOX_ACCESS_TOKEN_PROD'
+    ]
     
-    required.each { key ->
-        if (getEnvVar(key).isEmpty()) {
-            missing.add(key)
-        }
+    def missingVars = criticalVars.findAll { key ->
+        def value = getEnvVar(key)
+        return value.isEmpty() || value.contains('placeholder') || value.contains('your_')
     }
     
-    if (!missing.isEmpty()) {
-        logger.warn("Missing required environment variables: ${missing.join(', ')}")
-        logger.warn('Please create a .env file with all required variables')
+    if (!missingVars.isEmpty()) {
+        logger.warn("Missing or placeholder values for: ${missingVars.join(', ')}")
+        logger.warn("Please update your .env file with actual values before building release APK")
     }
 }
 
-// Validate on script load
-validateEnvVars()
+// Run validation
+validateEnvironment()
+
+// Make Bhilai coordinate validation available
+ext.validateBhilaiCoordinates = { Double lat, Double lng ->
+    return (lat >= 21.1 && lat <= 21.3) && (lng >= 81.2 && lng <= 81.4)
+}
+
+logger.info("Environment loader configured for Aalay Bhilai APK build")
